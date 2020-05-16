@@ -1,0 +1,1 @@
+<h1>This is <%= first_name(@user) %> with id <%= @user.id %></h1>
