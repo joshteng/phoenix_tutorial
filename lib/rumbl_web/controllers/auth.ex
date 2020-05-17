@@ -1,8 +1,10 @@
 defmodule RumblWeb.Auth do
   @moduledoc """
-  This is a module plug. According to plug, there must be 2 functions init/1 and conn/2
+  This is a module plug with other functionalities. According to plug, there must be 2 functions init/1 and conn/2
   """
   import Plug.Conn
+  import Phoenix.Controller
+  alias RumblWeb.Router.Helpers, as: Routes
 
   # Init runs only at compile time, the return value is passed to call
   def init(opts), do: opts
@@ -24,4 +26,16 @@ defmodule RumblWeb.Auth do
   def logout(conn), do: configure_session(conn, drop: true)
 
   # def logout(conn, user_id), do: delete_session(conn, :user_id)
+
+  # this essentially can be function plug
+  def authenticate_user(conn, _opts) do
+    if conn.assigns.current_user do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be logged in to access that page")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt() # where does halt() come from? from use RumblWeb, :controller I'm guessing and then Plug.Conn
+    end
+  end
 end
